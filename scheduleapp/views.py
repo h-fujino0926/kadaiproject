@@ -61,8 +61,35 @@ class MonthWithScheduleCalendar(mixins.MonthWithScheduleMixin, generic.TemplateV
         context.update(calendar_context)
         return context
 
+# class MyCalendar(mixins.MonthCalendarMixin, mixins.WeekWithScheduleMixin, generic.CreateView):
+#     """月間カレンダー、週間カレンダー、スケジュール登録画面のある欲張りビュー"""
+#     template_name = 'mycalendar.html'
+#     model = Schedule
+#     date_field = 'date'
+#     form_class = BS4ScheduleForm
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         week_calendar_context = self.get_week_calendar()
+#         month_calendar_context = self.get_month_calendar()
+#         context.update(week_calendar_context)
+#         context.update(month_calendar_context)
+#         return context
+
+#     def form_valid(self, form):
+#         month = self.kwargs.get('month')
+#         year = self.kwargs.get('year')
+#         day = self.kwargs.get('day')
+#         if month and year and day:
+#             date = datetime.date(year=int(year), month=int(month), day=int(day))
+#         else:
+#             date = datetime.date.today()
+#         schedule = form.save(commit=False)
+#         schedule.date = date
+#         schedule.save()
+#         return redirect('scheduleapp:mycalendar', year=date.year, month=date.month, day=date.day)
+
 class MyCalendar(mixins.MonthCalendarMixin, mixins.WeekWithScheduleMixin, generic.CreateView):
-    """月間カレンダー、週間カレンダー、スケジュール登録画面のある欲張りビュー"""
     template_name = 'mycalendar.html'
     model = Schedule
     date_field = 'date'
@@ -74,20 +101,22 @@ class MyCalendar(mixins.MonthCalendarMixin, mixins.WeekWithScheduleMixin, generi
         month_calendar_context = self.get_month_calendar()
         context.update(week_calendar_context)
         context.update(month_calendar_context)
-        return context
 
-    def form_valid(self, form):
-        month = self.kwargs.get('month')
-        year = self.kwargs.get('year')
-        day = self.kwargs.get('day')
-        if month and year and day:
-            date = datetime.date(year=int(year), month=int(month), day=int(day))
+        # ▼ URLから選択日を受け取る（/mycalendar/2025/9/18/ のように渡ってくる想定）
+        year = self.kwargs.get("year")
+        month = self.kwargs.get("month")
+        day = self.kwargs.get("day")
+
+        if year and month and day:
+            try:
+                selected_date = datetime.date(int(year), int(month), int(day))
+            except ValueError:
+                selected_date = None
         else:
-            date = datetime.date.today()
-        schedule = form.save(commit=False)
-        schedule.date = date
-        schedule.save()
-        return redirect('scheduleapp:mycalendar', year=date.year, month=date.month, day=date.day)
+            selected_date = None
+
+        context["selected_date"] = selected_date
+        return context
 
 class MonthWithFormsCalendar(mixins.MonthWithFormsMixin, generic.View):
     """フォーム付きの月間カレンダーを表示するビュー"""

@@ -49,8 +49,8 @@
       </a>
       {% if user.is_authenticated %}
       <a href="{% url 'scheduleapp:month' %}" class="btn btn-outline-light">月間</a>
-      <a href="{% url 'scheduleapp:week' %}" class="btn btn-outline-light">週間</a>
-      <a href="{% url 'scheduleapp:week_with_schedule' %}" class="btn btn-outline-light">予定表</a>
+      <!-- <a href="{% url 'scheduleapp:week' %}" class="btn btn-outline-light">週間</a> -->
+      <a href="{% url 'scheduleapp:week_with_schedule' %}" class="btn btn-outline-light">週間</a>
       <a href="{% url 'scheduleapp:month_with_forms' %}" class="btn btn-outline-light">簡易予定</a>
       <a href="{% url 'scheduleapp:mycalendar' %}" class="btn btn-outline-light">詳細予定</a>
       {% else %}
